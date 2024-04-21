@@ -1,18 +1,16 @@
-CREATE TABLE IF NOT EXISTS funds (
+CREATE TABLE IF NOT EXISTS investmentfunds (
     fund_id TEXT PRIMARY KEY,
-    fund_name TEXT NOT NULL,
-    fund_manager_name TEXT NOT NULL,
+    fund_name TEXT,
+    fund_manager_name TEXT,
     fund_description TEXT,
-    fund_nav REAL NOT NULL,
-    creation_date TEXT NOT NULL,
-    performance REAL NOT NULL
+    fund_nav REAL,
+    creation_date TEXT
 );
 
-CREATE TABLE IF NOT EXISTS transactions (
-    transaction_id INTEGER PRIMARY KEY,
-    fund_id TEXT NOT NULL,
-    transaction_type TEXT NOT NULL,
-    amount REAL NOT NULL,
-    transaction_date TEXT NOT NULL,
-    FOREIGN KEY (fund_id) REFERENCES funds (fund_id)
+CREATE TABLE IF NOT EXISTS fund_performances (
+    performance_id TEXT PRIMARY KEY,
+    fund_id TEXT,
+    performance_date TEXT,
+    performance REAL NOT NULL,
+    FOREIGN KEY (fund_id) REFERENCES investmentfunds(fund_id)
 );

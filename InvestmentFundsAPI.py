@@ -19,10 +19,10 @@ def get_funds():
     funds = [{'fund_id': row[0], 'fund_name': row[1], 'fund_manager_name': row[2],
               'fund_description': row[3], 'fund_nav': row[4], 'creation_date': row[5], 'performance': row[6]}
              for row in c.fetchall()]
-    return jsonify(funds)
+    return jsonify({'all_funds': funds})
 
 # Endpoint to create a new fund
-@app.route('/funds', methods=['POST'])
+@app.route('/addfunds', methods=['POST'])
 def create_fund():
     new_fund = InvestmentFunds.from_dict(request.json)
     c.execute(InvestmentFunds.NEW_FUND_QUERY,
@@ -44,9 +44,12 @@ def get_fund(fund_id):
 @app.route('/funds/<string:fund_id>', methods=['PUT'])
 def update_performance(fund_id):
     fund_updates = InvestmentFunds.from_dict(request.json)
-    c.execute(InvestmentFunds.UPDATE_FUND_QUERY, (fund_updates.performance, fund_id))
-    conn.commit()
-    return jsonify({'message': 'Performance updated'}), 200
+    if fund_updates > 100 or fund_updates < 0:
+        return jsonify({'message': 'Performance value invalid'}), 200
+    else:
+        c.execute(InvestmentFunds.UPDATE_FUND_QUERY, (fund_updates.performance, fund_id))
+        conn.commit()
+        return jsonify({'message': 'Performance updated'}), 200
 
 
 # Endpoint to delete a fund using its ID
@@ -54,7 +57,7 @@ def update_performance(fund_id):
 def delete_fund(fund_id):
     c.execute(InvestmentFunds.DELETE_FUND_QUERY, (fund_id,))
     conn.commit()
-    return jsonify({'message': 'Fund deleted'})
+    return jsonify({'message': 'Fund deleted'}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
@@ -62,7 +65,7 @@ if __name__ == '__main__':
 
 
 
-# # Sample data - replace with a database in a real application
+# # Sample data
 # funds = [
 #     {
 #         'fund_id': '1',
